@@ -1,0 +1,18 @@
+name: workflow variable demo
+
+on:
+  workflow_dispatch
+
+env:
+  cloud: google-cloud
+
+jobs:
+  job1:
+    runs-on: ubuntu-latest
+    env:
+      greet: Hello
+    steps:
+      - name: "Greet the viewer"
+        run: echo "$greet $first_name is using $cloud!"
+        env:
+          first_name: Alex
