@@ -23,4 +23,4 @@ jobs:
         run: echo "Deploying to ${{ github.event.inputs.environment }}"
 
       - name: Use a secret
-        run: echo "Secret is ${{ secrets.MY_SECRET }}"  # will be masked
+        run: echo "Secret is ${{ secrets.test }}"  # will be masked
