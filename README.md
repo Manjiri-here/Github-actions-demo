@@ -126,3 +126,17 @@ jobs:
 ```
 
 In the last three lines, we haven’t defined these variables anywhere. They are built-in and pulled from GitHub Actions contexts.
+
+# Manual input and secrets:
+
+>> Input under workflow_dispatch: You can also give manual input when triggering a manual workflow. We define this under inputs in the workflow_dispatch trigger. For syntax, refer to the GitHub Actions documentation or Vishal Bulbule’s repository. Then, when you manually trigger the workflow, you will get a window to enter those values. Inputs under workflow_dispatch allow manual workflows to ask for values. You define them in on.workflow_dispatch.inputs. 
+
+>> Secrets: Now coming to secrets: you cannot pass secrets directly in the workflow file (hard-code them). Hence, you need to create secrets in GitHub. To create secrets, go to Settings → Secrets and variables → Actions. Then click New repository secret. Add the secret name and value and save it. 
+
+>> In the workflow code, you use the secret the same way as configuration variables: ${{ secrets.secretName }}. When you run the step, the output will show stars (***) instead of the actual secret (masked). Use secrets with syntax ${{ secrets.SECRET_NAME }}. They are masked in logs.
+
+Example of secrets and manual input are as below - (The workflow is this same repo : 'input_manual_trigger')
+
+```
+
+```
