@@ -138,5 +138,30 @@ In the last three lines, we haven’t defined these variables anywhere. They are
 Example of secrets and manual input are as below - (The workflow is this same repo : 'input_manual_trigger')
 
 ```
+name: workflow_with_inputs_and_secrets
+on:
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: 'Which environment to deploy to'
+        required: true
+        default: 'staging'
+      run_tests:
+        description: 'Run tests before deploy'
+        required: false
+        type: boolean
+        default: false
 
+jobs:
+  job_one:
+    runs-on: ubuntu-latest   # or self-hosted tag if using your own runner
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Greet with inputs
+        run: echo "Deploying to ${{ github.event.inputs.environment }}"
+
+      - name: Use a secret
+        run: echo "Secret is ${{ secrets.test }}"  # will be masked
 ```
