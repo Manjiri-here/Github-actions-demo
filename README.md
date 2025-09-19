@@ -165,3 +165,23 @@ jobs:
       - name: Use a secret
         run: echo "Secret is ${{ secrets.test }}"  # will be masked
 ```
+
+# Runners:
+
+Runners are machines that execute the jobs defined in GitHub Actions workflows. A workflow is a set of jobs; each job is a set of steps (commands). But where are these steps executed? On runners.
+
+There are two types of runners:
+
+1) GitHub-hosted runners: Virtual machines provided by GitHub. They come preconfigured (OS, tools installed, etc.). GitHub manages their maintenance.
+
+2) Self-hosted runners: Machines you provide and manage (e.g. your EC2 instance). You install the runner software on them. You ensure network, security, uptime, etc.
+
+To use a self-hosted runner:
+
+Create the server in AWS or Azure as you normally do and then connect to them via SSH/terminal.
+Ensure SSH (port 22) access if needed.
+In your GitHub repository, go to Settings → Actions → Runners. In the Runners settings page, you’ll see commands to register the runner. Copy and execute those commands on the EC2 instance.
+
+After registration, the runner appears in GitHub as active/self-hosted. In the workflow file use runs-on: self-hosted (or tag matching your runner) so GitHub knows to use your self-hosted runner.
+
+When the EC2 instance (runner) is turned off or disconnected, the runner shows offline in GitHub. If you trigger a workflow then, jobs stay in queue. Also, not everyone has permission to register runners: depends on repository organization permissions. You can disable the self-hosted runner option in settings if needed.
