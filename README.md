@@ -90,5 +90,39 @@ Default and custom variables, plus secrets, are supported.
 ii) Configuration variable-
 Now, if we want to declare a variable which can be used in multiple workflows in the repository, then we use configuration variables.
 
+We define configuration variables in the settings of a repository, not inside the workflow’s YAML file. We use them in workflows by syntax ${{ vars.variableName }}.
 
+To define a configuration variable (variableName)as : Go to Settings in the repository -> Then Secrets and variables → Actions -> Click New repository variable, define the name & value, and save it
 
+Now you can run the workflow.
+
+For values related only to a specific workflow, we use workflow variables. But for more common variables, we use configuration variables.
+
+Context variable are preloaded set of information like who triggered the workflow, or repository name, or other metadata. These are available via the context from GitHub metadata.
+
+Sometimes we have many conditions to run the workflow. For example, “if repo name is xyz”, “if job name is xyz”, or “if environment is xyz”, then run certain parts. That metadata (repo, workflow, or job) is accessed using context.
+
+Example code using context variables:
+
+```
+
+name: context_variable_demo
+on:
+  workflow_dispatch
+
+env:
+  CLOUD: google
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Print repository and workflow info
+        run: |
+          echo "Repository name: ${{ github.repository }}"
+          echo "Workflow name: ${{ github.workflow }}"
+          echo "Triggered by: ${{ github.actor }}"
+```
+
+In the last three lines, we haven’t defined these variables anywhere. They are built-in and pulled from GitHub Actions contexts.
