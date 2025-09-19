@@ -185,3 +185,13 @@ In your GitHub repository, go to Settings → Actions → Runners. In the Runner
 After registration, the runner appears in GitHub as active/self-hosted. In the workflow file use runs-on: self-hosted (or tag matching your runner) so GitHub knows to use your self-hosted runner.
 
 When the EC2 instance (runner) is turned off or disconnected, the runner shows offline in GitHub. If you trigger a workflow then, jobs stay in queue. Also, not everyone has permission to register runners: depends on repository organization permissions. You can disable the self-hosted runner option in settings if needed.
+
+You need to implement the below commands to configure any server as runner (as mentioned above these commands are given in runner tab in Github)
+
+<img width="1792" height="983" alt="Screenshot 2025-09-19 at 5 27 08 PM" src="https://github.com/user-attachments/assets/0f957625-05f8-4a5c-b28b-905f293c04a9" />
+
+Now configure value as 'self-hosted' for 'on' value in workflow as below-
+```
+runs-on: self-hosted
+
+```
