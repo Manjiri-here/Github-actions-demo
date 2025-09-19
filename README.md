@@ -36,12 +36,12 @@ on:                        # event on which the workflow is triggered.
 
 jobs:                      # job is set of tasks that workflow executes
 
-  build:                   # name of a job (unique)
-    runs-on: ubuntu-latest # runner: Ubuntu environment
+  build:                     # name of a job (it is unique always)
+    runs-on: ubuntu-latest    # runner: Ubuntu environment
 
-  steps:
+  steps:                      # steps are individual tasks under jobs
       - uses: actions/checkout@v4
-      - name: Run a one-line script
+      - name: Run a one-line script   # name of the step
         run: echo "Hello, test change!"
       - name: Run a multi-line script
         run: |
