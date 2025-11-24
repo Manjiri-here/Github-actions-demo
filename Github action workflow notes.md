@@ -100,12 +100,13 @@ on:
   workflow_dispatch: {}
 
 concurrency:
-  group: ci-cd-${{ github.ref }}
-  cancel-in-progress: true
+  group: ci-cd-${{ github.ref }}            # github.ref = the branch or tag that triggered the workflow. We dont need to define this github.ref anywhere, github crewtes/picks it up automatically. You only reference it. GitHub replaces ${{ github.ref }} → refs/heads/main at runtime. Stops multiple workflows for the same branch from running at the same time → cancels earlier ones.
+  
+  cancel-in-progress: true                  # If a new pipeline starts on the same branch, GitHub cancels the older one.
 
-env:
-  IMAGE_NAME: ghcr.io/${{ github.repository_owner }}/myapp
-  IMAGE_TAG: ${{ github.sha }}
+env:                                                               # these are global variables, Defines variables for Docker image name and tag so all jobs use consistent naming → prevents mistakes.
+  IMAGE_NAME: ghcr.io/${{ github.repository_owner }}/myapp         # github.repository_owner = your GitHub username or org
+  IMAGE_TAG: ${{ github.sha }}                                     # github.sha = commit ID. So your image tag becomes the exact commit hash. So your image built will be: ghcr.io/your-username/myapp:d7e983f8c822ab53e913a2bdd5ab5380
 
 jobs:
   # -------------------------
@@ -114,12 +115,12 @@ jobs:
   lint:
     name: Lint
     runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - name: Setup Node (example)
-        uses: actions/setup-node@v4
-        with: node-version: 18
-      - name: Install deps (cache)
+    steps: 
+      - uses: actions/checkout@v4                    
+      - name: Setup Node (example)                  
+        uses: actions/setup-node@v4                  # uses: means you are calling an existing action — basically someone else’s script packaged for GitHub. There is zero magic. It’s just: download this action, run its code, pass it inputs
+        with: node-version: 18                       # with: is how you pass inputs to the action.It’s the equivalent of passing arguments to a function.
+      - name: Install deps (cache)                   # There is no universal syntax for with: because it depends on the action you are using. Every action has its own README that defines: Allowed inputs, output variables, examples Use readme for each action before using it.
         uses: actions/cache@v4
         with:
           path: ~/.npm
@@ -156,8 +157,8 @@ jobs:
   codeql:
     name: CodeQL Security Scan
     runs-on: ubuntu-latest
-    permissions:
-      actions: read
+    permissions:                          # GitHub Actions workflows run with a token called GITHUB_TOKEN. By default, this token has broad permissions (read/write). This is a security risk. So workflows can override the token’s power using this. “Give this workflow only read access to Actions and repository contents. Nothing more.”
+      actions: read      
       contents: read
       security-events: write
     steps:
@@ -198,7 +199,6 @@ jobs:
           tags: ${{ env.IMAGE_NAME }}:${{ env.IMAGE_TAG }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
-
       - name: Upload image-tag artifact
         uses: actions/upload-artifact@v4
         with:
@@ -216,35 +216,30 @@ jobs:
     needs: build-and-push
     if: github.ref == 'refs/heads/main'
     environment:
-      name: staging
-      url: https://staging.example.com
+      name: staging                                     # Says: “This job is deploying to the staging environment.”
+      url: https://staging.example.com                  # “If this workflow is running on the main branch → treat this job as a staging deployment and attach the staging URL.”
     steps:
       - uses: actions/checkout@v4
-
       # download the image-tag artifact from previous job (example)
       - name: Download image-tag
         uses: actions/download-artifact@v4
         with:
           name: image-tag
           path: .
-
       - name: Set up kubectl
         uses: azure/setup-kubectl@v3
         with:
           version: 'v1.27.0'
-
       - name: Configure Kubeconfig
         run: |
           echo "${{ secrets.KUBECONFIG }}" | base64 -d > kubeconfig
           export KUBECONFIG=$PWD/kubeconfig
         shell: bash
-
       - name: Update image in deployment
         run: |
           IMAGE="${{ env.IMAGE_NAME }}:$(cat image-tag.txt)"
           kubectl -n mynamespace set image deployment/myapp myapp=$IMAGE
           kubectl -n mynamespace rollout status deployment/myapp --timeout=120s
-
       - name: Run smoke tests
         run: ./scripts/smoke-test.sh
 
@@ -255,7 +250,7 @@ jobs:
     needs: [build-and-push, deploy]
     if: failure()
     steps:
-      - name: Send slack message
+      - name: Send slack message                    # “Run this job/step ONLY if a previous job/step in the workflow has failed.” failure() is a GitHub Actions built-in function that returns true when anything earlier failed. So this block is part of a failure-handling job.
         run: |
           curl -X POST -H 'Content-type: application/json' --data '{"text":"CI failed for ${{ github.repository }}"}' ${{ secrets.SLACK_WEBHOOK }}
 
