@@ -1,16 +1,16 @@
-Notes of girhub actions workflow:
+Notes of github actions workflow:
 
 Think of a workflow as a pipeline of jobs. Each job is a box that runs on a runner (host). Jobs can run in parallel or depend on others (needs). Build the pipeline so:
 
-Cheap checks (lint/unit tests) run first and in parallel.
+- Cheap checks (lint/unit tests) run first and in parallel.
 
-Expensive steps (integration tests, security scans, image builds) run after cheap steps pass.
+- Expensive steps (integration tests, security scans, image builds) run after cheap steps pass.
 
-Artifacts (test results, coverage reports, built image metadata) are passed between jobs via uploads/downloads or a registry.
+- Artifacts (test results, coverage reports, built image metadata) are passed between jobs via uploads/downloads or a registry.
 
-Final step is deployment, gated by environment protection or manual approval in production.
+- Final step is deployment, gated by environment protection or manual approval in production.
 
-Key concepts to use:
+**Key concepts to use:**
 
 jobs and needs (dependencies)
 
@@ -32,7 +32,7 @@ if: for conditional execution (e.g., only on main branch, only on tags)
 
 matrix for testing multiple versions (Node/Java/Python)
 
-Step-by-step plan you should follow when writing a new pipeline
+**Step-by-step plan you should follow when writing a new pipeline**
 
 Define scope: which branches, PRs, or tags trigger it? (e.g., push to main, pull_request for PRs).
 
@@ -72,7 +72,7 @@ SLACK_WEBHOOK (optional for notifications)
 
 Never hardcode secrets in your YAML.
 
-Full sample workflow
+**Full sample workflow**
 
 This is a general, practical pipeline for a containerized app (Node/Python/Java — language agnostic). It:
 
@@ -268,7 +268,7 @@ For Docker registry, I used GitHub Container Registry as example; swap with Dock
 
 KUBECONFIG should be stored as base64 of ~/.kube/config or use GitHub cloud provider actions to authenticate (e.g., aws-actions/amazon-eks-login for EKS).
 
-Why this structure (explain line-by-line thinking)
+**Why this structure (explain line-by-line thinking)**
 
 lint first: cheap, fails fast.
 
@@ -286,7 +286,7 @@ concurrency: prevents multiple concurrent deployments for same ref.
 
 if: github.ref == 'refs/heads/main' prevents pushing images for PRs.
 
-Practical tips & best practices (from experience)
+**Practical tips & best practices (from experience)**
 
 Use actions/cache for language deps to speed builds.
 
@@ -312,7 +312,7 @@ Set up branch protection rules so PR cannot be merged until CI passes.
 
 Keep workflows modular — consider reusable workflows once you have multiple repos.
 
-Exercises to build skill quickly (do in this order)
+**Exercises to build skill quickly (do in this order)**
 
 Create a minimal workflow: checkout + echo hello.
 
@@ -334,7 +334,7 @@ Convert repeated logic into a reusable workflow and call it from another repo.
 
 Do these one at a time and validate on GitHub Actions UI.
 
-Debugging workflows — fast checklist
+**Debugging workflows — fast checklist**
 
 If an action fails: open the job log, expand the failing step, copy the exact command and run locally or in a runner shell.
 
