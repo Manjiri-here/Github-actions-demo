@@ -2,17 +2,17 @@ name: My First GitHub Actions
 
 on: 
   workflow_dispatch:
- 
-# [push]
-
-jobs:
-  build:
-    runs-on: ubuntu-latest
      inputs:
       environment:     # name of the input, you can give multiple inputs
         description: "Deploy target"    # description is for users to understand what to enter
         required: true   # it is mndatory value that is why required is true
         default: "staging"   # otherwise if value is not entered then it takes 'staging as default value'
+# [push]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+     
 
 # Matrix strategy helps you run the entire workflow parallely on different runners with different versions or OS. Duplicate the entire job once per value. Matrix creates multiple independent VMs, not loops.Matrix is how real CI systems test multiple environments safely. “Matrix strategy in GitHub Actions allows running the same job across multiple configurations in parallel, such as different language versions or operating systems.”
 #| Job Run | Python Version |
