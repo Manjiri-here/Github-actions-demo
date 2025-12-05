@@ -352,3 +352,92 @@ Create a deploy-to-k8s job that uses GitHub OIDC to authenticate to AWS EKS (no 
 Convert the workflow into reusable workflows (for mono-repo / multi-repo reuse).
 
 Give you a step-by-step lab using k3d on your laptop to test deployments locally.
+
+---
+
+5 Dec 2025
+
+---
+
+#  pull_request_target:
+#   types: [opened, ready_for_review]
+
+✔ pull_request_target
+
+Runs in the context of the base repository (the main repo), NOT the PR code.
+
+Meaning:
+
+Workflow runs using main branch code, not PR code
+
+Has full repository permissions
+
+Has access to secrets
+
+This is dangerous if you don’t know what you're doing.
+
+Why does GitHub even allow this?
+
+Because maintainers sometimes need to:
+
+Add labels
+
+Comment on PRs
+
+Run tests with full permissions
+
+Use secrets for deployments (rare, risky)
+
+You never use this for running untrusted code from a fork.
+It is a security disaster if misused.
+
+_____
+
+GitHub Actions supports event filters.
+
+Example:
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+
+
+Meaning:
+
+Don’t trigger on all PR events, only the ones listed.
+
+Common PR event types:
+
+opened
+
+synchronize (new commits pushed to PR)
+
+reopened
+
+ready_for_review
+
+closed
+
+assigned
+
+labeled
+
+…many more
+
+Types = sub-events inside pull_request.
+
+Think of pull_request as the category, and types as specific actions inside that category.
+
+-----
+
+✔ pull_request
+
+Runs in the context of the PR branch.
+
+Uses the fork’s code
+
+Permissions are restricted
+
+Safe but limited
+
+This is the default one.
